@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
 {
@@ -13,7 +12,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        Gate::authorize('viewAny', Product::class);
+        $this->authorize('viewAny', Product::class);
 
         $products = Product::with('user')->get();
 
@@ -25,7 +24,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        Gate::authorize('create', Product::class);
+        $this->authorize('create', Product::class);
 
         return view('products.create');
     }
@@ -35,7 +34,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        Gate::authorize('create', Product::class);
+        $this->authorize('create', Product::class);
 
         $validated = $request->validate([
             'name'  => ['required', 'string', 'max:255'],
@@ -59,7 +58,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        Gate::authorize('view', $product);
+        $this->authorize('view', $product);
 
         return view('products.show', compact('product'));
     }
@@ -69,7 +68,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        Gate::authorize('update', $product);
+        $this->authorize('update', $product);
 
         return view('products.edit', compact('product'));
     }
@@ -79,7 +78,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        Gate::authorize('update', $product);
+        $this->authorize('update', $product);
 
         $validated = $request->validate([
             'name'  => ['required', 'string', 'max:255'],
@@ -102,7 +101,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        Gate::authorize('delete', $product);
+        $this->authorize('delete', $product);
 
         $product->delete();
 
