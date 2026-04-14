@@ -15,8 +15,8 @@
                     <p><strong>Propriétaire :</strong> {{ $product->user->name }}</p>
 
                     <div class="mt-4">
-
-                        @can('manage-product', $product)
+                        {{-- Modifier : visible uniquement pour le propriétaire --}}
+                        @can('update', $product)
                             <a href="{{ route('products.edit', $product) }}" class="text-blue-600 underline">
                                 Modifier le produit
                             </a>

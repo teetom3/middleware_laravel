@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
 {
@@ -12,6 +13,8 @@ class ProductController extends Controller
      */
     public function index()
     {
+        Gate::authorize('viewAny', Product::class);
+
         $products = Product::with('user')->get();
 
         return view('products.index', compact('products'));
@@ -22,6 +25,8 @@ class ProductController extends Controller
      */
     public function create()
     {
+        Gate::authorize('create', Product::class);
+
         return view('products.create');
     }
 
@@ -30,18 +35,18 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        // Validation basique
+        Gate::authorize('create', Product::class);
+
         $validated = $request->validate([
             'name'  => ['required', 'string', 'max:255'],
             'price' => ['required', 'numeric', 'min:0'],
         ]);
 
-        // Création du produit pour l'utilisateur connecté
         Product::create([
-            'name'     => $validated['name'],
-            'price'    => $validated['price'],
-            'user_id'  => $request->user()->id,
-            'is_public'=> $request->has('is_public'),
+            'name'      => $validated['name'],
+            'price'     => $validated['price'],
+            'user_id'   => $request->user()->id,
+            'is_public' => $request->has('is_public'),
         ]);
 
         return redirect()
@@ -54,7 +59,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        $this->authorize('view-product', $product);
+        Gate::authorize('view', $product);
 
         return view('products.show', compact('product'));
     }
@@ -64,7 +69,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        $this->authorize('manage-product', $product);
+        Gate::authorize('update', $product);
 
         return view('products.edit', compact('product'));
     }
@@ -72,9 +77,9 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request,  Product $product)
+    public function update(Request $request, Product $product)
     {
-        $this->authorize('manage-product', $product);
+        Gate::authorize('update', $product);
 
         $validated = $request->validate([
             'name'  => ['required', 'string', 'max:255'],
@@ -97,7 +102,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $this->authorize('manage-product', $product);
+        Gate::authorize('delete', $product);
 
         $product->delete();
 

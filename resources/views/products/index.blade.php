@@ -21,18 +21,18 @@
                                 — {{ $product->is_public ? 'Public' : 'Privé' }}
                                 <br />
 
-                                @can('view-product', $product)
+                                {{-- Voir : visible si propriétaire ou produit public --}}
+                                @can('view', $product)
                                     <a href="{{ route('products.show', $product) }}" class="ml-2 text-blue-600 underline">
                                         Voir
                                     </a>
                                 @endcan
-                                <br />
 
-                                @can('manage-product', $product)
+                                {{-- Modifier / Supprimer : visible uniquement pour le propriétaire --}}
+                                @can('update', $product)
                                     <a href="{{ route('products.edit', $product) }}" class="ml-2 text-green-600 underline">
                                         Modifier
                                     </a>
-
 
                                     <form action="{{ route('products.destroy', $product) }}" method="POST" class="inline">
                                         @csrf
